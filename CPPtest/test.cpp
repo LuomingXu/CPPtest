@@ -1,10 +1,12 @@
-#include<iostream>
+﻿#include<iostream>
 #include<vector>
 #include<algorithm>
 #include<sstream>
 #include<string>
 #include<ctime>
 using namespace std;
+
+int numberOFpeople = 0;
 
 double random(double start, double end)
 {
@@ -49,27 +51,12 @@ std::vector<std::string> Split(const std::string& s, const std::string& delim)
 	return v;
 }
 
-template<class T>
-bool isEmpty(T &temp)
-{
-	for (int i = 0; i < temp->length; i++)
-	{
-		if (temp[i].isAble)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 class People
 {
 public:
 	~People();
 	int pwd = 0;
-	bool isAble = true;
-	int length = 0;
+	int originIndex;
 };
 
 People::~People()
@@ -93,15 +80,13 @@ int main()
 		std::cout << var << endl;
 	}*/
 
-	int numberOFpeople = 0;
 	std::cout << "Please input the number of people" << endl;
 	std::cin >> numberOFpeople;
 
-	People *people = new People[numberOFpeople];
-	people->length = numberOFpeople;
+	People people[10];
 
 	std::cout << "Please input the password's range which belong to people" << endl;
-	std::cout << "LIKE : 1,10" << endl;
+	std::cout << "LIKE: 1,10" << endl;
 	string str;
 	int pwdStart = 0, pwdEnd = 0;
 	std::cin >> str;
@@ -109,9 +94,10 @@ int main()
 	convertFromStringToInt(pwdStart,v[0]);
 	convertFromStringToInt(pwdEnd, v[1]);
 
-	for (int i = 0; i < people->length; i++)
+	for (int i = 0; i < numberOFpeople; i++)
 	{
 		people[i].pwd = (int)random(pwdStart, pwdEnd);
+		people[i].originIndex = i;
 	}
 	std::cout << "Has assigneg pwd" << endl;
 
@@ -123,11 +109,38 @@ int main()
 	std::cout << "Please input the first people" << endl;
 	std::cin >> firstPeople;
 
-	int thePeople = firstPeople - 1 + cycle;
-	people[thePeople].isAble = false;
-	while (isEmpty(people))
+	while (people[0].pwd > 0)
 	{
+		firstPeople--;
+		if (cycle > numberOFpeople)
+			cycle %= numberOFpeople;
+		for (int i = 0; i < cycle; i++)
+		{
+			if (++firstPeople > numberOFpeople)
+			{
+				firstPeople = 1;
+			}
+		}
+		std::cout << "firstPeople: " << firstPeople << endl;
 
+		People temp;
+
+		cycle = people[firstPeople - 1].pwd;
+		std::cout << "The deleted people is " << people[firstPeople - 1].originIndex + 1 << "  His pwd is " << people[firstPeople - 1].pwd << endl;
+
+		for (int i = (firstPeople - 1); i < numberOFpeople; i++)
+		{
+			i++;
+			temp = people[i];
+			i--;
+			people[i] = temp;
+		}
+
+		numberOFpeople--;
+		for (int i = 0; i < numberOFpeople; i++)
+		{
+			std::cout << people[i].originIndex + 1 << "   " << people[i].pwd << endl;
+		}
 	}
 
 	getchar();
