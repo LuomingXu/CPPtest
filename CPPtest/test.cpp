@@ -68,17 +68,19 @@ int main()
 {
 	srand(unsigned(time(0)));//time seed
 
-	//for study
-	/*std::string s("0,10");
-	auto v = Split(s, ",");
-	std::cout << v[0] << endl;
-	double temp = 0;
-	convertFromStringToInt(temp, v[0]);
-	std::cout << temp << endl;
-	for each (auto var in v)
-	{
-		std::cout << var << endl;
-	}*/
+	#pragma region testCode
+			//for study
+			/*std::string s("0,10");
+			auto v = Split(s, ",");
+			std::cout << v[0] << endl;
+			double temp = 0;
+			convertFromStringToInt(temp, v[0]);
+			std::cout << temp << endl;
+			for each (auto var in v)
+			{
+			std::cout << var << endl;
+			}*/
+	#pragma endregion
 
 	std::cout << "Please input the number of people" << endl;
 	std::cin >> numberOFpeople;
@@ -96,10 +98,15 @@ int main()
 
 	for (int i = 0; i < numberOFpeople; i++)
 	{
-		people[i].pwd = (int)random(pwdStart, pwdEnd);
+		people[i].pwd = (int)random(pwdStart, pwdEnd);//the random range is "[start, end)"
 		people[i].originIndex = i;
-	}
-	std::cout << "Has assigneg pwd" << endl;
+	}//for--assign the pwd
+	std::cout << "Has assigned pwd..." << endl;
+
+	for (int i = 0; i < numberOFpeople; i++)
+	{
+		std::cout << i << "  " << people[i].originIndex << "  " << people[i].pwd << endl;
+	}//for--display all data
 
 	int cycle = 0;
 	std::cout << "Please input the first cycling times" << endl;
@@ -114,35 +121,47 @@ int main()
 		firstPeople--;
 		if (cycle > numberOFpeople)
 			cycle %= numberOFpeople;
-		for (int i = 0; i < cycle; i++)
+		std::cout << "cycle : " << cycle << endl;
+
+		if (cycle == 0)//if the cycle == 0, the firstPeople which should be deleted is the last people
 		{
-			if (++firstPeople > numberOFpeople)
-			{
-				firstPeople = 1;
-			}
+			firstPeople = numberOFpeople;
 		}
-		std::cout << "firstPeople: " << firstPeople << endl;
-
-		People temp;
-
-		cycle = people[firstPeople - 1].pwd;
+		else
+		{
+			for (int i = 0; i < cycle; i++)
+			{
+				if (++firstPeople > numberOFpeople)
+				{
+					firstPeople = 1;
+				}
+			}//for--confirm the first cycle people
+		}
+		
+		std::cout << "firstPeople: " << firstPeople<< endl;
 		std::cout << "The deleted people is " << people[firstPeople - 1].originIndex + 1 << "  His pwd is " << people[firstPeople - 1].pwd << endl;
 
+		cycle = people[firstPeople - 1].pwd;
+		People temp;
 		for (int i = (firstPeople - 1); i < numberOFpeople; i++)
 		{
-			i++;
-			temp = people[i];
-			i--;
-			people[i] = temp;
-		}
+			temp = people[++i];
+			people[--i] = temp;
+		}//for--delete the rubbish data
 
-		numberOFpeople--;
+		if (--numberOFpeople == 0)//if numberOFpeople == 0 break this WHILE
+			break;
+
 		for (int i = 0; i < numberOFpeople; i++)
 		{
 			std::cout << people[i].originIndex + 1 << "   " << people[i].pwd << endl;
-		}
+		}//for--display the rest data
+
+		std::cout << "-----------------------" << endl;
 	}
 
+	std::cout << endl << "The cycle is ended..." << endl;
+	std::cout << "Please input any key to exit..." << endl;
 	getchar();
 	getchar();
 	return 0;
